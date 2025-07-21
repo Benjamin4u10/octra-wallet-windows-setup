@@ -1,0 +1,86 @@
+name: Documentation Validation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-docs:
+    runs-on: ubuntu-latest
+    name: Validate Documentation
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install markdownlint-cli
+      run: npm install -g markdownlint-cli
+
+    - name: Lint Markdown files
+      run: markdownlint README.md CONTRIBUTING.md SECURITY.md --config .markdownlint.json
+      continue-on-error: true
+
+    - name: Check for broken links
+      uses: gaurav-nelson/github-action-markdown-link-check@v1
+      with:
+        use-quiet-mode: 'yes'
+        use-verbose-mode: 'yes'
+        config-file: '.markdown-link-check.json'
+
+    - name: Validate repository structure
+      run: |
+        echo "Checking required files..."
+        test -f README.md || (echo "README.md missing" && exit 1)
+        test -f LICENSE || (echo "LICENSE missing" && exit 1)
+        test -f CONTRIBUTING.md || (echo "CONTRIBUTING.md missing" && exit 1)
+        test -f SECURITY.md || (echo "SECURITY.md missing" && exit 1)
+        echo "All required files present ✅"
+
+    - name: Check file permissions
+      run: |
+        echo "Checking file permissions..."
+        find . -name "*.md" -exec test -r {} \; || (echo "Some markdown files are not readable" && exit 1)
+        echo "File permissions OK ✅"
+
+  test-commands:
+    runs-on: windows-latest
+    name: Test Commands on Windows
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Test Python installation
+      run: |
+        python --version
+        pip --version
+
+    - name: Test Git installation
+      run: git --version
+
+    - name: Validate Python commands from README
+      shell: bash
+      run: |
+        echo "Testing virtual environment creation..."
+        python -m venv test-venv
+        source test-venv/Scripts/activate
+        python -m pip install --upgrade pip
+        deactivate
+        echo "Virtual environment test passed ✅"
+
+    - name: Test curl availability
+      shell: bash
+      run: |
+        curl --version || echo "curl not available in this environment"

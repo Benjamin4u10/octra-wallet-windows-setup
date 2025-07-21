@@ -1,0 +1,273 @@
+# Octra Wallet CLI & Terminal Client - Complete Windows Setup Guide
+
+A comprehensive step-by-step guide for setting up Octra wallet creation and terminal client on Windows using Git Bash.
+
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Part 1: Create Octra Wallet](#part-1-create-octra-wallet)
+- [Part 2: Setup Terminal Client](#part-2-setup-terminal-client)
+- [Part 3: Run the Application](#part-3-run-the-application)
+- [Quick Copy-Paste Commands](#quick-copy-paste-commands)
+- [Desktop Shortcuts Setup](#desktop-shortcuts-setup)
+- [Troubleshooting](#troubleshooting)
+- [Daily Usage](#daily-usage)
+
+## Prerequisites
+
+Install these applications before starting:
+
+1. **Python 3.8 or higher**
+   - Download from: https://www.python.org/downloads/
+   - During installation, check "Add Python to PATH"
+
+2. **Git for Windows**
+   - Download from: https://git-scm.com/download/win
+   - This includes Git Bash which we'll use for all commands
+
+## Part 1: Create Octra Wallet
+
+### Step 1: Open Git Bash
+- Right-click on your desktop or in any folder
+- Select "Git Bash Here"
+
+### Step 2: Download and Run Wallet Creation Script
+```bash
+curl -sSL https://raw.githubusercontent.com/zunxbt/octra-wallet-cli/refs/heads/main/start.sh -o start.sh && chmod +x start.sh && ./start.sh
+```
+
+### Step 3: Save Your Wallet Information
+⚠️ **IMPORTANT**: The script will display your wallet information. Write down both:
+- **Wallet Address** (starts with "oct...")
+- **Private Key** (long hexadecimal string)
+
+Keep this information secure and private!
+
+### Step 4: Get Test Tokens
+1. Visit: https://faucet.octra.network
+2. Paste your wallet address
+3. Complete the captcha
+4. Request faucet tokens
+
+## Part 2: Setup Terminal Client
+
+### Step 5: Clone Repository
+```bash
+git clone https://github.com/octra-labs/octra_pre_client.git
+```
+
+### Step 6: Navigate to Project Directory
+```bash
+cd octra_pre_client
+```
+
+### Step 7: Create Virtual Environment
+```bash
+python -m venv venv
+```
+
+> **Note**: If `python` command fails, try `py -m venv venv` instead
+
+### Step 8: Activate Virtual Environment
+```bash
+source venv/Scripts/activate
+```
+
+✅ **Verification**: You should see `(venv)` at the beginning of your prompt
+
+### Step 9: Upgrade pip and Install Dependencies
+```bash
+python -m pip install --upgrade pip
+```
+
+```bash
+pip install -r requirements.txt
+```
+
+### Step 10: Create Wallet Configuration
+```bash
+cp wallet.json.example wallet.json
+```
+
+### Step 11: Edit Wallet Configuration
+```bash
+start wallet.json
+```
+
+This opens the file in your default text editor. Replace the contents with:
+
+```json
+{
+  "priv": "YOUR_PRIVATE_KEY_HERE",
+  "addr": "YOUR_WALLET_ADDRESS_HERE",
+  "rpc": "https://octra.network"
+}
+```
+
+Replace:
+- `YOUR_PRIVATE_KEY_HERE` with your private key from Step 3
+- `YOUR_WALLET_ADDRESS_HERE` with your wallet address from Step 3
+
+Save the file and close the editor.
+
+## Part 3: Run the Application
+
+### Step 12: Launch Terminal Client
+```bash
+python main.py
+```
+
+Alternative if the above doesn't work:
+```bash
+./run.bat
+```
+
+🎉 **Success**: You should see a retro-style terminal interface displaying your wallet balance and transaction history.
+
+## Quick Copy-Paste Commands
+
+For faster setup, copy and paste these command blocks:
+
+### Block 1 - Create Wallet
+```bash
+curl -sSL https://raw.githubusercontent.com/zunxbt/octra-wallet-cli/refs/heads/main/start.sh -o start.sh && chmod +x start.sh && ./start.sh
+```
+**Stop here and save your wallet information!**
+
+### Block 2 - Setup Terminal Client
+```bash
+git clone https://github.com/octra-labs/octra_pre_client.git
+cd octra_pre_client
+python -m venv venv
+source venv/Scripts/activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+cp wallet.json.example wallet.json
+start wallet.json
+```
+**Stop here and edit wallet.json with your wallet information!**
+
+### Block 3 - Launch Application
+```bash
+python main.py
+```
+
+## Desktop Shortcuts Setup
+
+Create easy desktop access after completing the initial setup:
+
+### Step 1: Create Batch Launcher
+While in the `octra_pre_client` directory in Git Bash:
+
+```bash
+echo '@echo off
+call venv\Scripts\activate.bat
+python main.py
+pause' > launch-octra.bat
+```
+
+### Step 2: Open File Explorer
+```bash
+explorer .
+```
+
+### Step 3: Create Desktop Shortcut
+In the File Explorer window that opens:
+1. Right-click on `launch-octra.bat`
+2. Select "Send to" → "Desktop (create shortcut)"
+3. Optionally rename the shortcut to "Octra Terminal Wallet"
+
+### Step 4: Test Shortcut
+Double-click the desktop shortcut to verify it launches the Octra terminal client directly.
+
+## Troubleshooting
+
+### Python Not Found
+```bash
+# Try using 'py' instead of 'python'
+py -m venv venv
+py -m pip install --upgrade pip
+py main.py
+```
+
+### Virtual Environment Won't Activate
+```bash
+# Try full path
+source ./venv/Scripts/activate
+
+# Verify it was created
+ls venv/Scripts/
+```
+
+### Wallet.json Won't Open
+```bash
+# Use Notepad instead
+notepad wallet.json
+
+# Or nano if available
+nano wallet.json
+```
+
+### Application Won't Start
+1. Verify virtual environment is active (shows `(venv)` in prompt)
+2. Check that wallet.json contains your actual wallet data, not placeholders
+3. Ensure all dependencies installed: `pip list`
+
+### Permission Errors
+- Run Git Bash as Administrator if needed
+- Verify Python installation and PATH settings
+
+## Daily Usage
+
+After initial setup, accessing your wallet is simple:
+
+### Using Command Line
+```bash
+cd octra_pre_client
+source venv/Scripts/activate
+python main.py
+```
+
+### Using Desktop Shortcut
+Simply double-click the desktop shortcut created earlier.
+
+### Exiting the Application
+- Press `Ctrl+C` to exit the terminal client
+- Type `deactivate` to exit the virtual environment
+
+## Features
+
+The Octra terminal client provides:
+
+- **Balance Display**: Real-time wallet balance
+- **Transaction History**: Complete transaction records  
+- **Send Transactions**: Send single or multiple transactions
+- **Export Functions**: Export private keys or wallet files
+- **Retro Interface**: DOS-era inspired terminal UI
+- **Modern Architecture**: Built with asynchronous Python
+
+## Security Notes
+
+⚠️ **Important Security Reminders**:
+- Never share your private key with anyone
+- Keep wallet.json secure and backed up
+- Use strong passwords for any wallet-related files  
+- This is for educational/testing purposes only
+
+## Resources
+
+- **Octra Network**: https://octra.network
+- **Octra Faucet**: https://faucet.octra.network  
+- **Wallet CLI Repository**: https://github.com/zunxbt/octra-wallet-cli
+- **Terminal Client Repository**: https://github.com/octra-labs/octra_pre_client
+
+## Support
+
+If you encounter issues:
+1. Check the troubleshooting section above
+2. Verify all prerequisites are properly installed
+3. Review error messages for specific guidance
+4. Check the official repositories for updates
+
+---
+
+**Disclaimer**: This guide is for educational and testing purposes. Always exercise caution when working with cryptocurrency wallets and private keys.
